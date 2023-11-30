@@ -1,0 +1,27 @@
+#!/usr/bin/perl -w
+use strict;
+
+if ((! defined $ARGV[0])||($ARGV[0] eq "")) {
+	print<<_END_;
+undos [file]: remove dos line breaks from a script
+_END_
+	exit;
+}
+if (!-f $ARGV[0]) {
+	print<<_END_;
+$ARGV[0] is not a file!
+_END_
+	exit;
+}
+open (MODIFY, "+<$ARGV[0]") 
+	or die "Opening: $@\n";
+my @file = <MODIFY>;;
+map { s/\r//g; } (@file);
+seek (MODIFY, 0, 0)
+	or die "Seeking: $@\n";
+print MODIFY @file
+	or die "Printing: $@\n";
+truncate (MODIFY, tell(MODIFY))
+	or die "Truncating: $@\n";
+close (MODIFY)
+	or die "Closing: $@\n";
